@@ -3,7 +3,7 @@ NopCommerce Payment Method for Nochex
 
 ## Installation
 
-* Download the plugin
+* [Download the plugin](https://github.com/AButler/Payments.Nochex/releases)
 * Unzip the contents of the zip file to the `Plugins` folder
 * Goto `Configuration` - `Plugins`
 * Click `Reload list of plugins`
