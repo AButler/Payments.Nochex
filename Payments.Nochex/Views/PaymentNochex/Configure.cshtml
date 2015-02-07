@@ -1,0 +1,181 @@
+﻿@{
+  Layout = "";
+}
+@model Nop.Plugin.Payments.Nochex.Models.ConfigurationModel
+@using System.Web.Mvc.Html
+@using Nop.Web.Framework;
+@Html.Action( "StoreScopeConfiguration", "Setting", new { area = "Admin" } )
+
+<script type="text/javascript">
+  $( document ).ready( function () {
+
+    $( "#@Html.FieldIdFor( model => model.AdditionalFeePercentage )" ).click( toggleAddPercent );
+    $( "#@Html.FieldIdFor( model => model.RedirectToTopicOnSuccess )" ).click( toggleSuccessTopic );
+    $( "#@Html.FieldIdFor( model => model.UseCallback )" ).click( toggleCallback );
+    $( "#txtApcUrl" ).focus( function () {
+      var $this = $( this );
+      $this.on( "click.a keyup.a", function () {
+        $this.off( "click.a keyup.a" ).select();
+      } );
+    } );
+
+    toggleAddPercent();
+    toggleSuccessTopic();
+    toggleCallback();
+  } );
+
+  function toggleAddPercent() {
+    if ( $( '#@Html.FieldIdFor( model => model.AdditionalFeePercentage )' ).is( ':checked' ) ) {
+      $( '#pnAddPercent' ).show();
+    } else {
+      $( '#pnAddPercent' ).hide();
+    }
+  }
+
+  function toggleSuccessTopic() {
+    if ( $( '#@Html.FieldIdFor( model => model.RedirectToTopicOnSuccess )' ).is( ':checked' ) ) {
+      $( '#pnSuccessTopic' ).show();
+    } else {
+      $( '#pnSuccessTopic' ).hide();
+    }
+  }
+
+  function toggleCallback() {
+    if ( $( '#@Html.FieldIdFor( model => model.UseCallback )' ).is( ':checked' ) ) {
+      $( '#pnApcUrl' ).show();
+    } else {
+      $( '#pnApcUrl' ).hide();
+    }
+  }
+
+</script>
+
+@using ( Html.BeginForm() ) {
+  <table class="adminContent">
+    <tr>
+      <td colspan="2">
+        @T( "Plugins.Payments.Nochex.Fields.NochexInfo" )
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <hr />
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.UseTestMode_OverrideForStore, model => model.UseTestMode, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.UseTestMode ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.UseTestMode )
+        @Html.ValidationMessageFor( model => model.UseTestMode )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.MerchantId_OverrideForStore, model => model.MerchantId, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.MerchantId ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.MerchantId )
+        @Html.ValidationMessageFor( model => model.MerchantId )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.OrderDescription_OverrideForStore, model => model.OrderDescription, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.OrderDescription ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.OrderDescription )
+        @Html.ValidationMessageFor( model => model.OrderDescription )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.AdditionalFee_OverrideForStore, model => model.AdditionalFee, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.AdditionalFee ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.AdditionalFee )
+        @Html.ValidationMessageFor( model => model.AdditionalFee )
+        <span id="pnAddPercent"><i>%</i></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.AdditionalFeePercentage_OverrideForStore, model => model.AdditionalFeePercentage, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.AdditionalFeePercentage ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.AdditionalFeePercentage )
+        @Html.ValidationMessageFor( model => model.AdditionalFeePercentage )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.UseCallback_OverrideForStore, model => model.UseCallback, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.UseCallback ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.UseCallback )
+        @Html.ValidationMessageFor( model => model.UseCallback )
+      </td>
+    </tr>
+    <tr id="pnApcUrl">
+      <td class="adminTitle">
+        @Html.NopLabelFor( model => model.ApcUrl ):
+      </td>
+      <td class="adminData">
+        <input id="txtApcUrl" type="text" readonly="readonly" value="@Model.ApcUrl" class="text-box single-line" />
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.HideBillingDetails_OverrideForStore, model => model.HideBillingDetails, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.HideBillingDetails ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.HideBillingDetails )
+        @Html.ValidationMessageFor( model => model.HideBillingDetails )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.RedirectToOrderDetails_OverrideForStore, model => model.RedirectToOrderDetails, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.RedirectToOrderDetails ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.RedirectToOrderDetails )
+        @Html.ValidationMessageFor( model => model.RedirectToOrderDetails )
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.RedirectToTopicOnSuccess_OverrideForStore, model => model.RedirectToTopicOnSuccess, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.RedirectToTopicOnSuccess ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.RedirectToTopicOnSuccess )
+        @Html.ValidationMessageFor( model => model.RedirectToTopicOnSuccess )
+      </td>
+    </tr>
+    <tr id="pnSuccessTopic">
+      <td class="adminTitle">
+        @Html.OverrideStoreCheckboxFor( model => model.SuccessTopicName_OverrideForStore, model => model.SuccessTopicName, Model.ActiveStoreScopeConfiguration )
+        @Html.NopLabelFor( model => model.SuccessTopicName ):
+      </td>
+      <td class="adminData">
+        @Html.EditorFor( model => model.SuccessTopicName )
+        @Html.ValidationMessageFor( model => model.SuccessTopicName )
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <input type="submit" name="save" class="k-button" value="@T( "Admin.Common.Save" )" />
+      </td>
+    </tr>
+  </table>
+    
+}

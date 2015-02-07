@@ -1,0 +1,8 @@
+Group: Payment methods
+FriendlyName: Nochex
+SystemName: Payments.Nochex
+Version: 3.40
+SupportedVersions: 3.40
+Author: webbutler
+DisplayOrder: 1
+FileName: Nop.Plugin.Payments.Nochex.dll
