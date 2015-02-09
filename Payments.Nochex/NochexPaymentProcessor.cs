@@ -15,6 +15,7 @@ using Nop.Services.Localization;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
+using Nop.Web.Framework;
 
 namespace Nop.Plugin.Payments.Nochex {
   public class NochexPaymentProcessor: BasePlugin, IPaymentMethod {
@@ -46,55 +47,55 @@ namespace Nop.Plugin.Payments.Nochex {
     }
 
     public void PostProcessPayment( PostProcessPaymentRequest postProcessPaymentRequest ) {
-      var parameters = new Dictionary<string, string>();
       var storeUrl = _webHelper.GetStoreLocation( false );
       var order = postProcessPaymentRequest.Order;
       var orderTotal = Math.Round( order.OrderTotal, 2 );
       var orderDescription = GetOrderDescription( order );
 
+      var post = new RemotePost { Url = NochexUrl };
+
       // Merchant Id
-      parameters.Add( "merchant_id", _settings.MerchantId );
+      post.Add( "merchant_id", _settings.MerchantId );
 
       // Urls
-      parameters.Add( _settings.UseTestMode ? "test_success_url" : "success_url", HttpUtility.UrlEncode( storeUrl + SuccessOrderUrl ) );
-      parameters.Add( "cancel_url", HttpUtility.UrlEncode( storeUrl + CancelUrl ) );
+      post.Add( _settings.UseTestMode ? "test_success_url" : "success_url", storeUrl + SuccessOrderUrl );
+      post.Add( "cancel_url", storeUrl + CancelUrl );
 
       // Order Details
-      parameters.Add( "order_id", order.Id.ToString( CultureInfo.InvariantCulture ) );
-      parameters.Add( "optional_1", order.OrderGuid.ToString() );
-      parameters.Add( "description", HttpUtility.UrlEncode( orderDescription ) );
-      parameters.Add( "amount", orderTotal.ToString( "0.00", CultureInfo.InvariantCulture ) );
+      post.Add( "order_id", order.Id.ToString( CultureInfo.InvariantCulture ) );
+      post.Add( "optional_1", order.OrderGuid.ToString() );
+      post.Add( "description", orderDescription );
+      post.Add( "amount", orderTotal.ToString( "0.00", CultureInfo.InvariantCulture ) );
 
       // Billing Address
       var billingAddress = order.BillingAddress;
-      parameters.Add( "billing_fullname", HttpUtility.UrlEncode( billingAddress.FullName() ) );
-      parameters.Add( "billing_address", HttpUtility.UrlEncode( billingAddress.Lines() ) );
-      parameters.Add( "billing_city", HttpUtility.UrlEncode( billingAddress.City ) );
-      parameters.Add( "billing_postcode", HttpUtility.UrlEncode( billingAddress.ZipPostalCode ) );
-      parameters.Add( "email_address", HttpUtility.UrlEncode( billingAddress.Email ) );
-      parameters.Add( "customer_phone_number", HttpUtility.UrlEncode( billingAddress.PhoneNumber ) );
+      post.Add( "billing_fullname", billingAddress.FullName() );
+      post.Add( "billing_address", billingAddress.Lines() );
+      post.Add( "billing_city", billingAddress.City );
+      post.Add( "billing_postcode", billingAddress.ZipPostalCode );
+      post.Add( "email_address", billingAddress.Email );
+      post.Add( "customer_phone_number", billingAddress.PhoneNumber );
 
       // Shipping Address
       if ( order.ShippingStatus != ShippingStatus.ShippingNotRequired ) {
         var shippingAddress = order.ShippingAddress;
-        parameters.Add( "delivery_fullname", HttpUtility.UrlEncode( shippingAddress.FullName() ) );
-        parameters.Add( "delivery_address", HttpUtility.UrlEncode( shippingAddress.Lines() ) );
-        parameters.Add( "delivery_city", HttpUtility.UrlEncode( billingAddress.City ) );
-        parameters.Add( "delivery_postcode", HttpUtility.UrlEncode( shippingAddress.ZipPostalCode ) );
+        post.Add( "delivery_fullname", shippingAddress.FullName() );
+        post.Add( "delivery_address", shippingAddress.Lines() );
+        post.Add( "delivery_city", billingAddress.City );
+        post.Add( "delivery_postcode", shippingAddress.ZipPostalCode );
       }
 
       if ( _settings.UseTestMode ) {
-        parameters.Add( "test_transaction", "100" );
+        post.Add( "test_transaction", "100" );
       }
       if ( _settings.UseCallback ) {
-        parameters.Add( "callback_url", HttpUtility.UrlEncode( storeUrl + CallbackUrl ) );
+        post.Add( "callback_url", storeUrl + CallbackUrl );
       }
       if ( _settings.HideBillingDetails ) {
-        parameters.Add( "hide_billing_details", "true" );
+        post.Add( "hide_billing_details", "true" );
       }
 
-      var paymentUrl = NochexUrl + "?" + string.Join( "&", parameters.Select( p => p.Key + "=" + p.Value ) );
-      _httpContext.Response.Redirect( paymentUrl );
+      post.Post();
     }
 
     public decimal GetAdditionalHandlingFee( IList<ShoppingCartItem> cart ) {

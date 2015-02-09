@@ -1,7 +1,7 @@
 Group: Payment methods
 FriendlyName: Nochex
 SystemName: Payments.Nochex
-Version: 3.40
+Version: 3.41
 SupportedVersions: 3.40
 Author: webbutler
 DisplayOrder: 1
