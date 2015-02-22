@@ -51,6 +51,7 @@
 </script>
 
 @using ( Html.BeginForm() ) {
+  @Html.AntiForgeryToken()
   <table class="adminContent">
     <tr>
       <td colspan="2">

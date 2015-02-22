@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Web;
 using System.Web.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
@@ -28,15 +26,13 @@ namespace Nop.Plugin.Payments.Nochex {
     private readonly NochexPaymentSettings _settings;
     private readonly ISettingService _settingService;
     private readonly IWebHelper _webHelper;
-    private readonly HttpContextBase _httpContext;
     private readonly IOrderTotalCalculationService _orderTotalCalculationService;
     private readonly ITokenizer _tokenizer;
 
-    public NochexPaymentProcessor( NochexPaymentSettings settings, ISettingService settingService, IWebHelper webHelper, HttpContextBase httpContext, IOrderTotalCalculationService orderTotalCalculationService, ITokenizer tokenizer ) {
+    public NochexPaymentProcessor( NochexPaymentSettings settings, ISettingService settingService, IWebHelper webHelper, IOrderTotalCalculationService orderTotalCalculationService, ITokenizer tokenizer ) {
       _settings = settings;
       _settingService = settingService;
       _webHelper = webHelper;
-      _httpContext = httpContext;
       _orderTotalCalculationService = orderTotalCalculationService;
       _tokenizer = tokenizer;
     }
@@ -96,6 +92,10 @@ namespace Nop.Plugin.Payments.Nochex {
       }
 
       post.Post();
+    }
+
+    public bool HidePaymentMethod( IList<ShoppingCartItem> cart ) {
+      return false;
     }
 
     public decimal GetAdditionalHandlingFee( IList<ShoppingCartItem> cart ) {
